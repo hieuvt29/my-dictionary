@@ -1,7 +1,7 @@
 # Simple Dictionary
 
 ### Technology:
-- Python: pynput (catch mouse, keyboard events), request library (get result from (https://tracau.vn/)[tracau.vn] api)
+- Python: pynput (catch mouse, keyboard events), request library (get result from [tracau.vn](https://tracau.vn/) api)
 - gtk for handle clipboard
 - Tkinter for GUI
 
