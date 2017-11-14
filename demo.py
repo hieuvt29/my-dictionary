@@ -54,20 +54,38 @@ def on_scroll(x, y, dx, dy):
     print('Scroll vector {0}'.format((dx, dy)))
 
 
+isCatchWords = False
+catchedWords = None
 def on_press(key):
     global ctrl_btn_press
+    global isCatchWords
+    global catchedWords
     try:
-        print('alphanumeric key {0} pressed'.format(key.char))
+        # print('alphanumeric key {0} pressed'.format(key.char))
+        if isCatchWords:
+            catchedWords += key.char
+        if key.char == 'i' and ctrl_btn_press:
+            isCatchWords = True
+            catchedWords = ""
     except AttributeError:
         if key == Keyboard.Key.ctrl:
             ctrl_btn_press = True
-        print('special key {0} pressed'.format(key))
+        if key == Keyboard.Key.space:
+            catchedWords += " "
+        if key == Keyboard.Key.backspace:
+            catchedWords = catchedWords[:-1]
+        if key == Keyboard.Key.enter:
+            isCatchWords = False
+            print("\nCatched words: ", catchedWords)
+            lookup(catchedWords)
+            catchedWords = ""
+        # print('special key {0} pressed'.format(key))
 
 def on_release(key):
     global ctrl_btn_press
-    print('{0} released'.format(key))
+    # print('{0} released'.format(key))
     if key == Keyboard.Key.ctrl:
-            ctrl_btn_press = False
+        ctrl_btn_press = False
     if key == Keyboard.Key.esc:
         # Stop listener
         return False
@@ -108,14 +126,17 @@ def make_text_popup(content, lookupText):
 
 def _clipboard_changed(clipboard, event):
     global ctrl_btn_press
-    #global mouse_release
-    #print("clipboard changed")
-    # if not ctrl_btn_press: 
-    #    return
-    # else:
-    #    ctrl_btn_press = False
+    # global mouse_release
+    # print("clipboard changed")
+    if not ctrl_btn_press: 
+       return
+    else:
+       ctrl_btn_press = False
 
     text = clipboard.wait_for_text()
+    lookup(text)
+
+def lookup(text):
     print("Looking up for: ", text)
     url = 'http://api.tracau.vn/WBBcwnwQpV89/'+text+'/en/JSON_CALLBACK'
     response = requests.get(url)
@@ -125,11 +146,9 @@ def _clipboard_changed(clipboard, event):
         content = content[14:-3]
         content = re.compile(r'<.*?>').sub("", content)
         content = json.loads(content)
-        
-        if len(content['sentences']) == 0: 
-	    print("no information")
-	    return
-        # display popup to show result
+        if len(content['sentences']) == 0:
+            print("no information")
+            return                                                                      # display popup to show result
         make_text_popup(content, text)
 
 if __name__=="__main__":
