@@ -6,4 +6,4 @@
 - Tkinter for GUI
 
 ### Features:
-- catch user's double-click words and search it through api, result displayed on a popup which closes when user hover mouse out of it range
+- catch user's double-clicked words and search it through api, result displayed on a popup which closes when user hover mouse out of it range
